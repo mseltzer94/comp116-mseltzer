@@ -1,0 +1,4 @@
+124.254.58.156 - - [26/Apr/2015:10:58:02 +0200] "GET /phpMyAdmin/scripts/setup.php HTTP/1.1" 404 27 "-" "-"
+124.254.58.156 - - [26/Apr/2015:10:58:02 +0200] "GET /pma/scripts/setup.php HTTP/1.1" 404 27 "-" "-"
+124.254.58.156 - - [26/Apr/2015:10:58:03 +0200] "GET /myadmin/scripts/setup.php HTTP/1.1" 404 27 "-" "-"
+66.249.64.67 - - [26/Apr/2015:13:20:23 +0200] "GET / HTTP/1.1" 200 301 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
