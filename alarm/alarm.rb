@@ -65,18 +65,33 @@ def phpMyAdmin? (line)
         return line =~ /phpmyadmin/i
 end
 
+def masscan? (line)
+        return line =~ /masscan/i
+end
+
+def nmap? (line)
+        return line =~ /nmap/i
+end
+
+
 def read_log (log)
 	i=0
-	puts "#{log}"
 	f = File.new(log)
 	f.each_line do |line|
 		if phpMyAdmin? line
 			i = alert_parse("phpMyAdmin", line, i)
 		end
+		if masscan? line
+                        i = alert_parse("masscan", line, i)
+                end
+		if nmap? line
+                        i = alert_parse("nmap", line, i)
+                end
 	end
 end
 
-puts "#{ARGV}"
+
+# command line options
 if (ARGV.length == 0)
 	live_stream()
 else
