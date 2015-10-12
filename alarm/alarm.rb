@@ -1,5 +1,4 @@
 require 'packetfu'
-require 'optparse'
 
 def null_scan? (pkt)
        return ( pkt.tcp_flags.rst==0 && 
@@ -48,35 +47,41 @@ def alert (desc, pkt, i)
         return i+1
 end
 
+def check_pkt (pkt, i)
+	  if (pkt.proto).include? 'TCP'
+		if null_scan? pkt
+			i = alert("NULL Scan", pkt, i)
+		end
+		if xmas_scan? pkt
+			i = alert("XMAS Scan", pkt, i)
+		end
+		if fin_scan? pkt
+			 i = alert("FIN Scan", pkt, i)
+		end
+
+		if nmap_scan? pkt
+			i = alert("NMAP Scan", pkt, i)
+		end
+		if creditcard? pkt
+			i = alert("Plaintext credit card", pkt, i)
+		end
+		if nikto? pkt
+			i = alert("nikto scan", pkt, i)
+		end
+
+		#testing
+		i = alert("test", pkt, i)
+		return i
+	end
+
+end
+
 def live_stream ()
         stream = PacketFu::Capture.new(:start => true, :iface => 'eth0', :promisc => true)
         i=0
         stream.stream.each do |raw|
-                pkt = PacketFu::Packet.parse raw
-                if (pkt.proto).include? 'TCP'
-                        if null_scan? pkt
-                                i = alert("NULL Scan", pkt, i)
-                        end
-                        if xmas_scan? pkt
-                                i = alert("XMAS Scan", pkt, i)
-                        end
-                        if fin_scan? pkt
-                                 i = alert("FIN Scan", pkt, i)
-                        end
-
-                        if nmap_scan? pkt
-                                i = alert("NMAP Scan", pkt, i)
-                        end
-			if creditcard? pkt
-                                i = alert("Plaintext credit card", pkt, i)
-                        end
-			if nikto? pkt
-                                i = alert("nikto scan", pkt, i)
-                        end
-	
-			#testing
-                        i = alert("test", pkt, i)
-                end
+        	pkt = PacketFu::Packet.parse raw
+		i = check_pkt(pkt, i)
         end
 end
 
@@ -147,10 +152,25 @@ def read_log (log)
 	end
 end
 
+def read_pcap(pcap)
+	p = Pcap.open_offline(pcap)
+	p = PacketFu::PcapFile.read(pcap)
+	i=0
+	p.each do |raw|
+		pkt = PacketFu::Packet.parse raw
+		i = check_pkt(pkt, i)
+	end
+end
+
 
 # command line options
 if (ARGV.length == 0)
 	live_stream()
 else
-	read_log(ARGV[1]);
-end
+	case ARGV[0]
+	when "-r"
+		read_log(ARGV[1]);
+	when "-p"
+		read_pcap(ARGV[1]);
+	end
+end	
