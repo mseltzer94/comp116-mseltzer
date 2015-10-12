@@ -87,6 +87,7 @@ end
 
 def alert_parse (desc, line, i)
 	# split while retaining quotes
+	# regex from http://stackoverflow.com/questions/11566094/trying-to-split-string-into-single-words-or-quoted-words-and-want-to-keep-the
 	s = line.split(/\s(?=(?:[^"]|"[^"]*")*$)/)
 	ip_addr = s[0]
 	payload = s[5]
