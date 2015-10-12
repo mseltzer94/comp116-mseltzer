@@ -29,17 +29,16 @@ def fin_scan? (pkt)
 end
 
 def nmap_scan? (pkt)
-       return (((pkt.payload).to_s).include? "nmap")
+       return ((pkt.payload).scan("nmap"))
 end
 
 def creditcard? (pkt)
-	#todo
-	return false
+	#regex from http://www.sans.org/security-resources/idfaq/snort-detect-credit-card-numbers.php
+	return (/4\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}/).match(pkt.payload)
 end 	
 
 def nikto? (pkt)
-	#todo
-        return false
+        return ((pkt.payload).scan("nikto"))
 end
 
 def alert (desc, pkt, i)
@@ -116,8 +115,7 @@ def shellshock? (line)
 end
 
 def nikto? (line)
-	#todo
-	return false
+	return line =~/Nikto/i
 end
 
 def shellcode? (line)
