@@ -29,7 +29,7 @@ def fin_scan? (pkt)
 end
 
 def nmap_scan? (pkt)
-       return ((pkt.payload).scan("nmap"))
+       return ((pkt.payload).include?("nmap"))
 end
 
 def creditcard? (pkt)
@@ -38,41 +38,12 @@ def creditcard? (pkt)
 end 	
 
 def nikto? (pkt)
-        return ((pkt.payload).scan("nikto"))
+        return ((pkt.payload).include?("nikto"))
 end
 
 def alert (desc, pkt, i)
-        puts "#{i}. ALERT: #{desc} for #{pkt.ip_saddr} (#{pkt.proto})"
+        puts "#{i}. ALERT: #{desc} for #{pkt.ip_saddr} (#{pkt.proto}) (#{pkt.payload})!"
         return i+1
-end
-
-def check_pkt (pkt, i)
-	  if (pkt.proto).include? 'TCP'
-		if null_scan? pkt
-			i = alert("NULL Scan", pkt, i)
-		end
-		if xmas_scan? pkt
-			i = alert("XMAS Scan", pkt, i)
-		end
-		if fin_scan? pkt
-			 i = alert("FIN Scan", pkt, i)
-		end
-
-		if nmap_scan? pkt
-			i = alert("NMAP Scan", pkt, i)
-		end
-		if creditcard? pkt
-			i = alert("Plaintext credit card", pkt, i)
-		end
-		if nikto? pkt
-			i = alert("nikto scan", pkt, i)
-		end
-
-		#testing
-		i = alert("test", pkt, i)
-		return i
-	end
-
 end
 
 def live_stream ()
@@ -80,7 +51,31 @@ def live_stream ()
         i=0
         stream.stream.each do |raw|
         	pkt = PacketFu::Packet.parse raw
-		i = check_pkt(pkt, i)
+		if (pkt.proto).include? 'TCP'
+			if null_scan? pkt
+				i = alert("NULL Scan", pkt, i)
+			end
+			if xmas_scan? pkt
+				i = alert("XMAS Scan", pkt, i)
+			end
+			if fin_scan? pkt
+				 i = alert("FIN Scan", pkt, i)
+			end
+
+			if nmap_scan? pkt
+				i = alert("NMAP Scan", pkt, i)
+			end
+			if creditcard? pkt
+				i = alert("Plaintext credit card", pkt, i)
+			end
+			if nikto? pkt
+				i = alert("nikto scan", pkt, i)
+			end
+
+			#testing
+			i = alert("test", pkt, i)
+       		 end
+
         end
 end
 
@@ -157,7 +152,30 @@ def read_pcap(pcap)
 	i=0
 	p.each do |raw|
 		pkt = PacketFu::Packet.parse raw
-		i = check_pkt(pkt, i)
+		if (pkt.proto).include? 'TCP'
+                        if null_scan? pkt
+                                i = alert("NULL Scan", pkt, i)
+                        end
+                        if xmas_scan? pkt
+                                i = alert("XMAS Scan", pkt, i)
+                        end
+                        if fin_scan? pkt
+                                 i = alert("FIN Scan", pkt, i)
+                        end
+
+                        if nmap_scan? pkt
+                                i = alert("NMAP Scan", pkt, i)
+                        end
+                        if creditcard? pkt
+                                i = alert("Plaintext credit card", pkt, i)
+                        end
+                        if nikto? pkt
+                                i = alert("nikto scan", pkt, i)
+                        end
+
+                        #testing
+                        i = alert("test", pkt, i)
+                 end
 	end
 end
 
