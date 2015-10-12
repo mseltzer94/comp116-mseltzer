@@ -2,19 +2,45 @@ require 'packetfu'
 require 'optparse'
 
 def null_scan? (pkt)
-       return ( pkt.tcp_flags.rst==0 && pkt.tcp_flags.syn==0 && pkt.tcp_flags.ack==0)
+       return ( pkt.tcp_flags.rst==0 && 
+		pkt.tcp_flags.urg==0 &&
+		pkt.tcp_flags.psh==0 &&
+	    	pkt.tcp_flags.syn==0 && 
+		pkt.tcp_flags.fin==0 &&
+		pkt.tcp_flags.ack==0)
 end
 
 def xmas_scan? (pkt)
-       return ( pkt.tcp_flags.fin==1 && pkt.tcp_flags.psh==1 && pkt.tcp_flags.urg==1)
+	return ( pkt.tcp_flags.rst==1 &&
+                pkt.tcp_flags.urg==1 &&
+                pkt.tcp_flags.psh==1 &&
+                pkt.tcp_flags.syn==1 &&
+                pkt.tcp_flags.fin==1 &&
+                pkt.tcp_flags.ack==1)
+
 end
 
 def fin_scan? (pkt)
-       return ( pkt.tcp_flags.fin==1 && pkt.tcp_flags.psh==0 && pkt.tcp_flags.urg==0)
+	return ( pkt.tcp_flags.rst==0 &&
+                pkt.tcp_flags.urg==0 &&
+                pkt.tcp_flags.psh==0 &&
+                pkt.tcp_flags.syn==0 &&
+                pkt.tcp_flags.fin==1 &&
+                pkt.tcp_flags.ack==0)
 end
 
 def nmap_scan? (pkt)
-       return ((pkt.payload).include? "nmap")
+       return (((pkt.payload).to_s).include? "nmap")
+end
+
+def creditcard? (pkt)
+	#todo
+	return false
+end 	
+
+def nikto? (pkt)
+	#todo
+        return false
 end
 
 def alert (desc, pkt, i)
@@ -41,7 +67,14 @@ def live_stream ()
                         if nmap_scan? pkt
                                 i = alert("NMAP Scan", pkt, i)
                         end
-
+			if creditcard? pkt
+                                i = alert("Plaintext credit card", pkt, i)
+                        end
+			if nikto? pkt
+                                i = alert("nikto scan", pkt, i)
+                        end
+	
+			#testing
                         i = alert("test", pkt, i)
                 end
         end
@@ -73,20 +106,44 @@ def nmap? (line)
         return line =~ /nmap/i
 end
 
+def shellshock? (line)
+	return line =~/() { :; }/i
+end
+
+def nikto? (line)
+	#todo
+	return false
+end
+
+def shellcode? (line)
+	#todo
+	return false
+end
+
 
 def read_log (log)
 	i=0
 	f = File.new(log)
 	f.each_line do |line|
 		if phpMyAdmin? line
-			i = alert_parse("phpMyAdmin", line, i)
+			i = alert_parse("phpMyAdmin access", line, i)
 		end
 		if masscan? line
                         i = alert_parse("masscan", line, i)
                 end
 		if nmap? line
-                        i = alert_parse("nmap", line, i)
+                        i = alert_parse("nmap scan", line, i)
                 end
+		if shellshock? line
+                        i = alert_parse("shellshock code", line, i)
+                end
+		if nikto? line
+                        i = alert_parse("nikto scan", line, i)
+                end
+		if shellcode? line
+                        i = alert_parse("shell code", line, i)
+                end
+		
 	end
 end
 
