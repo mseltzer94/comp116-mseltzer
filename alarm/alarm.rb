@@ -29,13 +29,17 @@ def fin_scan? (pkt)
 end
 
 def nmap_scan? (pkt)
-       return ((pkt.payload).include?("nmap"))
+       return ((pkt.payload).scan("nmap"))
 end
 
 def creditcard? (pkt)
 	#regex from http://www.sans.org/security-resources/idfaq/snort-detect-credit-card-numbers.php
-	return (/4\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}/).match(pkt.payload)
-end 	
+	#note: this will only detect visa, mastercard, discover, and amex
+	return ((/4\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}/).match(pkt.payload)||
+		(/5\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}/).match(pkt.payload)||
+		(/6011(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}/).match(pkt.payload)  ||
+		(/(3\d{3}(\s|-)?\d{6}(\s|-)?\d{5})/).match(pkt.payload))
+end 		
 
 def nikto? (pkt)
         return ((pkt.payload).include?("nikto"))
@@ -115,7 +119,8 @@ def nikto? (line)
 end
 
 def shellcode? (line)
-	#todo
+	#based on information from http://www.linuxdevcenter.com/pub/a/linux/2006/05/18/how-shellcodes-work.html
+	#return line =~//\x/i
 	return false
 end
 
