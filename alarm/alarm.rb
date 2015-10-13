@@ -92,8 +92,7 @@ def alert_parse (desc, line, i)
 	payload = s[5]
 	if line =~ /http/i
 		proto = "HTTP"
-	end
-		
+	end		
 	puts "#{i}. ALERT: #{desc} is detected from #{ip_addr} (#{proto}) (#{payload})!"
         return i+1
 end
@@ -120,8 +119,7 @@ end
 
 def shellcode? (line)
 	#based on information from http://www.linuxdevcenter.com/pub/a/linux/2006/05/18/how-shellcodes-work.html
-	#return line =~//\x/i
-	return false
+	return line =~/\\x/i
 end
 
 
