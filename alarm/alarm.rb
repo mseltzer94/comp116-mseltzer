@@ -29,7 +29,7 @@ def fin_scan? (pkt)
 end
 
 def nmap_scan? (pkt)
-       return ((pkt.payload).scan("nmap"))
+       return ((pkt.payload)=~(/\x4E\x6D\x61\x70/))
 end
 
 def creditcard? (pkt)
@@ -42,7 +42,7 @@ def creditcard? (pkt)
 end 		
 
 def nikto? (pkt)
-        return ((pkt.payload).include?("nikto"))
+       return ((pkt.payload)=~(/\x4E\x69\x6B\x74\x6F/))
 end
 
 def alert (desc, pkt, i)
