@@ -10,17 +10,17 @@ def null_scan? (pkt)
 end
 
 def xmas_scan? (pkt)
-	return ( pkt.tcp_flags.rst==1 &&
+	return (pkt.tcp_flags.rst==0 &&
                 pkt.tcp_flags.urg==1 &&
                 pkt.tcp_flags.psh==1 &&
-                pkt.tcp_flags.syn==1 &&
+                pkt.tcp_flags.syn==0 &&
                 pkt.tcp_flags.fin==1 &&
-                pkt.tcp_flags.ack==1)
+                pkt.tcp_flags.ack==0)
 
 end
 
 def fin_scan? (pkt)
-	return ( pkt.tcp_flags.rst==0 &&
+	return (pkt.tcp_flags.rst==0 &&
                 pkt.tcp_flags.urg==0 &&
                 pkt.tcp_flags.psh==0 &&
                 pkt.tcp_flags.syn==0 &&
@@ -46,7 +46,7 @@ def nikto? (pkt)
 end
 
 def alert (desc, pkt, i)
-        puts "#{i}. ALERT: #{desc} for #{pkt.ip_saddr} (#{pkt.proto}) (#{pkt.payload})!"
+        puts "#{i}. ALERT: #{desc} is detected for #{pkt.ip_saddr} (#{pkt.proto}) (#{pkt.payload})!"
         return i+1
 end
 
@@ -75,9 +75,6 @@ def live_stream ()
 			if nikto? pkt
 				i = alert("nikto scan", pkt, i)
 			end
-
-			#testing
-			i = alert("test", pkt, i)
        		 end
 
         end
@@ -92,6 +89,8 @@ def alert_parse (desc, line, i)
 	payload = s[5]
 	if line =~ /http/i
 		proto = "HTTP"
+	else
+		proto = "UDP"
 	end		
 	puts "#{i}. ALERT: #{desc} is detected from #{ip_addr} (#{proto}) (#{payload})!"
         return i+1
@@ -124,6 +123,10 @@ end
 
 
 def read_log (log)
+	if (log == nil)
+                puts "no log file specified"
+                return
+        end
 	i=0
 	f = File.new(log)
 	f.each_line do |line|
@@ -150,6 +153,10 @@ def read_log (log)
 end
 
 def read_pcap(pcap)
+	if (pcap == nil)
+		puts "no pcap file specified"
+		return
+	end
 	p = Pcap.open_offline(pcap)
 	p = PacketFu::PcapFile.read(pcap)
 	i=0
@@ -175,9 +182,6 @@ def read_pcap(pcap)
                         if nikto? pkt
                                 i = alert("nikto scan", pkt, i)
                         end
-
-                        #testing
-                        i = alert("test", pkt, i)
                  end
 	end
 end
