@@ -52,18 +52,28 @@ set1.pcap
   set3.pcap
 
 15. How many plaintext username-password pairs are there in this packet set? Please count any anonymous or generic accounts.
-  - 1
+  - 2
 16. For each of the plaintext username-password pair that you found, identify the protocol used, server IP, the corresponding domain name (e.g., google.com), and port number.
-  - USER: seymore  PASS: butts
+  - USER: "seymore"  PASS: "butts"
     - Protocol: HTTP
     - Destination Port: 80
     - Server IP: 162.222.171.208
     - Domain: forum.defcon.org
+  - USER: "nab01620@nifty.com" PASS: "Nifty->takirin1"
+    - Protocol: IMAP
+    - Destination Port: 143
+    - Server IP: 210.131.4.155
+    - Domain: nifty.com
+  - USER: "jeff" PASS: "asdasdasd"
+    - Protocol: HTTP
+    - Destination Port: 143
+    - Server IP: 10.139.15.225
+    - Domain: ec2.intelctf.com
 
     IMPORTANT NOTE: PLEASE DO NOT LOG ON TO THE WEBSITE OR SERVICE ASSOCIATED WITH THE USERNAME-PASSWORD THAT YOU FOUND!
 
 17. Of all the plaintext username-password pairs that you found, how many of them are legitimate? That is, the username-password was valid, access successfully granted? Please do not count any anonymous or generic accounts.
-  - 0
+  - 2
 
 18. Provide a listing of all IP addresses with corresponding hosts (hostname + domain name) that are in this PCAP set. Describe your methodology.
 |                 |                                                                          |
@@ -362,7 +372,6 @@ set1.pcap
 |   10.139.15.243 | vjatv.iespana.es                                                         |
 |   10.103.15.184 | apple.com                                                                |
 |   10.103.15.184 | local                                                                    |
-
 
   - This was performed by using tshark and filtering for dns queries
     like this:
