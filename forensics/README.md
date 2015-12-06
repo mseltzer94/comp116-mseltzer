@@ -4,7 +4,7 @@ Assignment 5: Forensics
 
 Part A
 
-	Images a.jpg, b.jpg, and c.jpg appear to be the same in terms of image quality and coloration. However the size of the files differs as a is 2.1MB while both B and C are 2.2. Using the command tool application diff, it appears a is different from both b and c, but b and c are the exact same file. Furthermore a.jpg does not have metadata, while b and c shows the metadata listed in "meta.png".
+	Images a.jpg, b.jpg, and c.jpg appear to be the same in terms of image quality and coloration. However the size of the files differs as a is 2.1MB while both B and C are 2.2. Using the command tool application diff, it appears a is different from both b and c, but b and c are the exact same file. Furthermore a.jpg does not have metadata, while b and c shows the metadata listed in "meta.png". In addition, when using steghide (a stenography tool that hides data in media files) with the password '' (blank), a runnable binary was found. The binary can be called with ./runme <name> and then responds <name>, you are doing a heckuvajob!. 
 
 	This metadata was extracted via a web tool called metapicz.com.
 
